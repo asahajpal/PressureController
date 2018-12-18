@@ -9,13 +9,13 @@ namespace AtomicReactor
         private System.Timers.Timer timer;
         private double pressureIncreaseRate;
 
-        public FissionChamber()
+        public FissionChamber(IReactorVessel vessel)
         {
             timer = new System.Timers.Timer(1000); //  1 sec timer
-            pressureIncreaseRate = 0.03;
+            pressureIncreaseRate = 0.03;  // pressure increase rate = 3%/s (given)
             timer.Elapsed += OnTimedEvent;
             timer.AutoReset = true;
-            Vessel = new ReactorVessel();
+            Vessel = vessel;
         }
 
         private void OnTimedEvent(Object source, ElapsedEventArgs e)

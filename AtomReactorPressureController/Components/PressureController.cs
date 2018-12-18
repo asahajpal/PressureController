@@ -23,12 +23,12 @@ namespace AtomicReactor
 
         public PressureController()
         {
-            fissionChamber = new FissionChamber();
-            Vessel = fissionChamber.Vessel;
+            Vessel = new ReactorVessel();
+            fissionChamber = new FissionChamber(Vessel);           
             fissionChamber.NotifyPressureIncrease += OnPressureIncreaseEvent;
             pSensor = new PressureSensor();
-            valve = new Valve();
             pSensor.SetVessel(Vessel);
+            valve = new Valve();            
             valve.SetVessel(Vessel);
         }
 

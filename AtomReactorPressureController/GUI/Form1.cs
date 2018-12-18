@@ -36,8 +36,8 @@ namespace AtomicReactor
 
         void UpdateNormalMode(double p, double s)
         {
-            Console.WriteLine("\nReactor Vessel Pressure raised to {0}", p.ToString("0.000"));
-            Console.WriteLine("PressureSensor reading {0}", s.ToString("0.000"));
+            Console.WriteLine("\nReactor Vessel Pressure : {0}", p.ToString("0.000"));
+            Console.WriteLine("PressureSensor reading  : {0}", s.ToString("0.000"));
         }
 
         void UpdateValveActuation()
