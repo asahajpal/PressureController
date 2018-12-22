@@ -11,9 +11,9 @@
 
         public void Activate(double pDelta)
         {
-            // open valve
+            // open valve takes 2 sec 
             vessel.DecreasePressure(pDelta);
-            //close valve
+            //close valve takes 2 sec
         }
     }
 }
