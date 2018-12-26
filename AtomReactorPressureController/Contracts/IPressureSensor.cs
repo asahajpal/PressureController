@@ -14,5 +14,6 @@ namespace AtomicReactor
     {
         void SetVessel(IReactorVessel vessel);
         double GetPressureReading();
+        double GetProjectedPressureReading();
     }
 }

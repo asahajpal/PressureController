@@ -5,37 +5,44 @@ namespace AtomicReactor
 {
     class FissionChamber : IFissionChamber
     {
-        public event Notify NotifyPressureIncrease;
-        private System.Timers.Timer timer;
-        private double pressureIncreaseRate;
+        private IPressureController _pc;
+        private readonly double _pressureIncreaseRate;
+        private bool timerEventAdded;
 
-        public FissionChamber(IReactorVessel vessel)
+        public FissionChamber(IReactorVessel vessel, IPressureController pc)
         {
-            timer = new System.Timers.Timer(1000); //  1 sec timer
-            pressureIncreaseRate = 0.03;  // pressure increase rate = 3%/s (given)
-            timer.Elapsed += OnTimedEvent;
-            timer.AutoReset = true;
+            _pc = pc;
+            _pc.NotifyTimerEvent += IncreasePressure;
+            _pressureIncreaseRate = 0.03;  // pressure increase rate = 3%/s (given)
+            timerEventAdded = true;
             Vessel = vessel;
         }
 
-        private void OnTimedEvent(Object source, ElapsedEventArgs e)
+        private void IncreasePressure(double pressure, double prReading, double projPf )
         {
-            var pDelta = pressureIncreaseRate * Vessel.Pressure;
+            var pDelta = _pressureIncreaseRate * Vessel.Pressure;
+
             Vessel.IncreasePressure(pDelta);
-            if (NotifyPressureIncrease != null)
-                NotifyPressureIncrease(Vessel.Pressure);
         }
 
         public IReactorVessel Vessel { get; set; }
 
         public void StartProcess()
         {
-            timer.Enabled = true;
+            if (!timerEventAdded)
+            {
+                _pc.NotifyTimerEvent += IncreasePressure;
+                timerEventAdded = true;
+            }
         }
 
         public void StopProcess()
         {
-            timer.Enabled = false;
+            if(timerEventAdded)
+            {
+                _pc.NotifyTimerEvent -= IncreasePressure;
+                timerEventAdded = false;
+            }
         }
     }
 }

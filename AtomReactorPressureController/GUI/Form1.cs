@@ -18,8 +18,8 @@ namespace AtomicReactor
         {
             InitializeComponent();
             reactor = new PressureController();
-            reactor.NotifyViews += UpdateNormalMode;
-            reactor.NotifyValveAction += new NotifyValveActuation(UpdateValveActuation);
+            reactor.NotifyTimerEvent += UpdatePressureIncrease;
+            reactor.NotifyValveAction += UpdateValveActuation;
             Console.WriteLine("\nPress the \"Start Process\" button to start the application...\n");
         }
 
@@ -34,7 +34,7 @@ namespace AtomicReactor
             Console.WriteLine("Terminating the application...");
         }
 
-        void UpdateNormalMode(double p, double s)
+        void UpdatePressureIncrease(double p, double s,  double projPf)
         {
             Console.WriteLine("\nReactor Vessel Pressure : {0}", p.ToString("0.000"));
             Console.WriteLine("PressureSensor reading  : {0}", s.ToString("0.000"));
@@ -47,11 +47,6 @@ namespace AtomicReactor
         }
 
         private void label1_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void button2_Click(object sender, EventArgs e)
         {
 
         }

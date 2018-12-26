@@ -2,7 +2,8 @@
 
 namespace AtomicReactor
 {
-    public delegate void NotifyViews(double reactorPressure, double pressureSensorReading);
+    public delegate void NotifyTimerEvent(double reactorPressure, double pressureSensorReading, 
+        double projSensorReading);
 
     public delegate void NotifyValveActuation();
     
@@ -12,10 +13,10 @@ namespace AtomicReactor
     /// </summary>
     public interface IPressureController
     {
-       event NotifyViews NotifyViews;
+       event NotifyTimerEvent NotifyTimerEvent;
        event NotifyValveActuation NotifyValveAction;
-       void StartProcess();
+        double OptimumPressureLoad { get; }
+        void StartProcess();
        void StopProcess();
-       void MonitorPressureAndValveActuator(double s);
     }
 }

@@ -41,5 +41,18 @@ namespace AtomicReactor
 
             return -1;
         }
+
+        public double GetProjectedPressureReading()
+        {
+            // projected pressure in next 1 sec
+            var pr1 = vessel.Pressure + 0.03 * vessel.Pressure;
+            // projected pressure in next 2 sec
+            var pr2 = pr1 * 0.03 + pr1;
+            var minValue = vessel.MinPressure;
+            var maxValue = vessel.MaxPressure;
+            var projectedPressureFactor = (pr2 - minValue) / (maxValue - minValue);
+            return projectedPressureFactor;
+        }
+
     }
 }

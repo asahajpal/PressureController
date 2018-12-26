@@ -12,53 +12,57 @@ namespace AtomicReactor
     {
         private IPressureSensor pSensor;
         private IValve valve;
-        private readonly double optimumPressureLoad = 0.56;   // optimum pressure load (given)
-        private readonly double pressureDecreaseRate = 0.06;  // pressure decrease rate is 6 %/s (given)
+        private System.Timers.Timer timer;
+
+        //private readonly double _pressureDecreaseRate = 0.06;  // pressure decrease rate is 6 %/s (given)
         private IFissionChamber fissionChamber;
 
-        public event NotifyViews NotifyViews;
+        public event NotifyTimerEvent NotifyTimerEvent;
         public event NotifyValveActuation NotifyValveAction;
 
         private IReactorVessel Vessel { get; }
 
+        public double OptimumPressureLoad { get; } = 0.56;
+
         public PressureController()
         {
+            timer = new System.Timers.Timer(1000); //  1 sec timer
+            timer.Elapsed += OnTimedEvent;
+            timer.AutoReset = true;
+            
             Vessel = new ReactorVessel();
-            fissionChamber = new FissionChamber(Vessel);           
-            fissionChamber.NotifyPressureIncrease += OnPressureIncreaseEvent;
+            fissionChamber = new FissionChamber(Vessel, this);
+            
             pSensor = new PressureSensor();
             pSensor.SetVessel(Vessel);
-            valve = new Valve();            
+            valve = new Valve(this);            
             valve.SetVessel(Vessel);
+            valve.NotifyValveAction += OnValveActivation;
         }
 
-        private void OnPressureIncreaseEvent(double vesselPressure)
+        private void OnValveActivation()
         {
-            if (NotifyViews != null)
-                NotifyViews(vesselPressure, pSensor.GetPressureReading());
-            MonitorPressureAndValveActuator(pSensor.GetPressureReading());
+            if (NotifyValveAction != null)
+                NotifyValveAction();
+        }
+
+        private void OnTimedEvent(Object source, ElapsedEventArgs e)
+        {
+            var prReading = pSensor.GetPressureReading();
+            var projPf = pSensor.GetProjectedPressureReading();
+            var pr = Vessel.Pressure;
+            if (NotifyTimerEvent != null)
+                NotifyTimerEvent(pr, prReading, projPf);
         }
 
         public void StartProcess()
         {
-            fissionChamber.StartProcess();
+            timer.Start();
         }
 
         public void StopProcess()
         {
-            fissionChamber.StopProcess();
-        }
-
-        public void MonitorPressureAndValveActuator(double pf)
-        {
-            // if pressure factor exceeds optimum pressure load
-            if (pf > optimumPressureLoad)
-            {
-                var pDelta = pressureDecreaseRate * Vessel.Pressure;
-                if (NotifyValveAction != null)
-                    NotifyValveAction();
-                valve.Activate(pDelta);
-            }
+            timer.Stop();
         }
     }
 }
