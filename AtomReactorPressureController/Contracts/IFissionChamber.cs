@@ -9,7 +9,7 @@ namespace AtomicReactor
     /// FissionChamber contains Reactor Vessel, it is process responsible for Pressure Increase
     /// in the ReactorVessel (which need to be controlled)
     /// </summary>
-    interface IFissionChamber
+    public interface IFissionChamber
     {
         void StartProcess();
         void StopProcess();
